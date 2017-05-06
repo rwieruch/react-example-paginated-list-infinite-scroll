@@ -51,7 +51,7 @@ class App extends React.Component {
           <button type="button">Search</button>
         </form>
 
-        <List
+        <ListWithInfiniteScroll
           list={this.state.hits}
           page={this.state.page}
           onPaginatedSearch={this.onPaginatedSearch}
@@ -76,6 +76,35 @@ const withPaginate = (Component) => ({ page, onPaginatedSearch, ...props }) =>
       }
   </div>
 
+const withInfiniteScroll = (Component) =>
+  class WithInfiniteScroll extends React.Component {
+    constructor(props) {
+      super(props);
+      this.onScroll = this.onScroll.bind(this);
+    }
+
+    componentDidMount() {
+      window.addEventListener('scroll', this.onScroll, false);
+    }
+
+    componentWillUnmount() {
+      window.removeEventListener('scroll', this.onScroll, false);
+    }
+
+    onScroll() {
+      if (
+        (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500) &&
+        this.props.page !== null
+      ) {
+        this.props.onPaginatedSearch();
+      }
+    }
+
+    render() {
+      return <Component {...this.props} />;
+    }
+  }
+
 class List extends React.Component {
   render() {
     const { list } = this.props;
@@ -88,5 +117,6 @@ class List extends React.Component {
 }
 
 const ListWithPaginate = withPaginate(List);
+const ListWithInfiniteScroll = withInfiniteScroll(List);
 
 export default App;
