@@ -1,4 +1,5 @@
 import React from 'react';
+import './App.css';
 
 const applySetResult = (result) => (prevState) => ({
   hits: [...prevState.hits, ...result.hits],
@@ -43,15 +44,15 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <h1>Search Hacker News</h1>
+      <div className="page">
+        <div className="interactions">
+          <form type="submit" onSubmit={this.onInitialSearch}>
+            <input type="text" ref={node => this.input = node} />
+            <button type="button">Search</button>
+          </form>
+        </div>
 
-        <form type="submit" onSubmit={this.onInitialSearch}>
-          <input type="text" ref={node => this.input = node} />
-          <button type="button">Search</button>
-        </form>
-
-        <ListWithInfiniteScroll
+        <ListWithPaginate
           list={this.state.hits}
           page={this.state.page}
           onPaginatedSearch={this.onPaginatedSearch}
@@ -65,15 +66,17 @@ const withPaginate = (Component) => ({ page, onPaginatedSearch, ...props }) =>
   <div>
     <Component { ...props } />
 
-    {
-        page !== null &&
-        <button
-          type="button"
-          onClick={onPaginatedSearch}
-        >
-          More
-        </button>
-      }
+    <div className="interactions">
+      {
+          page !== null &&
+          <button
+            type="button"
+            onClick={onPaginatedSearch}
+          >
+            More
+          </button>
+        }
+      </div>
   </div>
 
 const withInfiniteScroll = (Component) =>
@@ -109,8 +112,10 @@ class List extends React.Component {
   render() {
     const { list } = this.props;
     return (
-      <div>
-        {list.map(item => <div key={item.objectID}>{item.title}</div>)}
+      <div className="list">
+        {list.map(item => <div className="list-row" key={item.objectID}>
+          <a href={item.url}>{item.title}</a>
+        </div>)}
       </div>
     );
   }
