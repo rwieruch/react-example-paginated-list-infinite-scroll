@@ -51,7 +51,7 @@ class App extends React.Component {
           <button type="button">Search</button>
         </form>
 
-        <ListWithPaginate
+        <List
           list={this.state.hits}
           page={this.state.page}
           onPaginatedSearch={this.onPaginatedSearch}
@@ -76,10 +76,16 @@ const withPaginate = (Component) => ({ page, onPaginatedSearch, ...props }) =>
       }
   </div>
 
-const List = ({ list, page, onPaginatedSearch }) =>
-  <div>
-    {list.map(item => <div key={item.objectID}>{item.title}</div>)}
-  </div>
+class List extends React.Component {
+  render() {
+    const { list } = this.props;
+    return (
+      <div>
+        {list.map(item => <div key={item.objectID}>{item.title}</div>)}
+      </div>
+    );
+  }
+}
 
 const ListWithPaginate = withPaginate(List);
 
