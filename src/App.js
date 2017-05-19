@@ -1,9 +1,12 @@
 import React from 'react';
+import { compose } from 'recompose';
+
 import './App.css';
 
 const applySetResult = (result) => (prevState) => ({
   hits: [...prevState.hits, ...result.hits],
   page: result.page,
+  isLoading: false,
 });
 
 const getHackerNewsUrl = (value, page) =>
@@ -16,6 +19,7 @@ class App extends React.Component {
     this.state = {
       hits: [],
       page: null,
+      isLoading: false,
     };
   }
 
@@ -34,10 +38,12 @@ class App extends React.Component {
   onPaginatedSearch = (e) =>
     this.fetchStories(this.input.value, this.state.page + 1)
 
-  fetchStories = (value, page) =>
+  fetchStories = (value, page) => {
+    this.setState({ isLoading: true });
     fetch(getHackerNewsUrl(value, page))
       .then(response => response.json())
       .then(result => this.onSetResult(result));
+  }
 
   onSetResult = (result) =>
     this.setState(applySetResult(result));
@@ -52,8 +58,9 @@ class App extends React.Component {
           </form>
         </div>
 
-        <ListWithPaginate
+        <ListWithLoadingWithInfinite
           list={this.state.hits}
+          isLoading={this.state.isLoading}
           page={this.state.page}
           onPaginatedSearch={this.onPaginatedSearch}
         />
@@ -62,30 +69,41 @@ class App extends React.Component {
   }
 }
 
-const withPaginate = (Component) => ({ page, onPaginatedSearch, ...props }) =>
+const List = ({ list }) =>
+  <div className="list">
+    {list.map(item => <div className="list-row" key={item.objectID}>
+      <a href={item.url}>{item.title}</a>
+    </div>)}
+  </div>
+
+const withLoading = (Component) => (props) =>
   <div>
-    <Component { ...props } />
+    <Component {...props} />
+
+    <div className="interactions">
+      {props.isLoading && <span>Loading...</span>}
+    </div>
+  </div>
+
+const withPaginated = (Component) => ({ page, onPaginatedSearch, ...rest }) =>
+  <div>
+    <Component {...rest} />
 
     <div className="interactions">
       {
-          page !== null &&
-          <button
-            type="button"
-            onClick={onPaginatedSearch}
-          >
-            More
-          </button>
-        }
-      </div>
+        (page !== null && !rest.isLoading) &&
+        <button
+          type="button"
+          onClick={onPaginatedSearch}
+        >
+          More
+        </button>
+      }
+    </div>
   </div>
 
 const withInfiniteScroll = (Component) =>
   class WithInfiniteScroll extends React.Component {
-    constructor(props) {
-      super(props);
-      this.onScroll = this.onScroll.bind(this);
-    }
-
     componentDidMount() {
       window.addEventListener('scroll', this.onScroll, false);
     }
@@ -94,10 +112,11 @@ const withInfiniteScroll = (Component) =>
       window.removeEventListener('scroll', this.onScroll, false);
     }
 
-    onScroll() {
+    onScroll = () => {
       if (
         (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500) &&
-        this.props.page !== null
+        this.props.list.length &&
+        !this.props.isLoading
       ) {
         this.props.onPaginatedSearch();
       }
@@ -108,20 +127,10 @@ const withInfiniteScroll = (Component) =>
     }
   }
 
-class List extends React.Component {
-  render() {
-    const { list } = this.props;
-    return (
-      <div className="list">
-        {list.map(item => <div className="list-row" key={item.objectID}>
-          <a href={item.url}>{item.title}</a>
-        </div>)}
-      </div>
-    );
-  }
-}
-
-const ListWithPaginate = withPaginate(List);
-const ListWithInfiniteScroll = withInfiniteScroll(List);
+const ListWithLoadingWithInfinite = compose(
+  withLoading,
+  // withPaginated,
+  withInfiniteScroll,
+)(List);
 
 export default App;
