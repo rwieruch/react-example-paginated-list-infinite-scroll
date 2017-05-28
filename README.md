@@ -1,6 +1,10 @@
 # react-example-paginated-list-infinite-scroll
 
-Showcase on how to use paginated lists and infinite scroll in React. Read more about it in [this tutorial](https://www.robinwieruch.de/react-paginated-list).
+Showcase on how to use paginated lists and infinite scroll in React. Read more about it in these tutorials:
+
+* [Part I](https://www.robinwieruch.de/react-paginated-list)
+* [Part II](https://www.robinwieruch.de/react-infinite-scroll)
+* [Part III](https://www.robinwieruch.de/react-advanced-list-component)
 
 ## Installation
 
