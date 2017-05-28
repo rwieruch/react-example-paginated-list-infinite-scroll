@@ -12,4 +12,4 @@ Showcase on how to use paginated lists and infinite scroll in React. Read more a
 * `cd react-example-paginated-list-infinite-scroll`
 * `npm install`
 * `npm start`
-* visit http://localhost:8080/
+* visit http://localhost:3000/
