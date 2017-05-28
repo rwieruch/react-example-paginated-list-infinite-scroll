@@ -3,8 +3,15 @@ import { compose } from 'recompose';
 
 import './App.css';
 
-const applySetResult = (result) => (prevState) => ({
+const applyUpdateResult = (result) => (prevState) => ({
   hits: [...prevState.hits, ...result.hits],
+  page: result.page,
+  isError: false,
+  isLoading: false,
+});
+
+const applySetResult = (result) => (prevState) => ({
+  hits: result.hits,
   page: result.page,
   isError: false,
   isLoading: false,
@@ -43,21 +50,23 @@ class App extends React.Component {
   }
 
   onPaginatedSearch = (e) =>
-    this.fetchStories(this.input.value, this.state.page + 1)
+    this.fetchStories(this.input.value, this.state.page + 1);
 
   fetchStories = (value, page) => {
     this.setState({ isLoading: true });
     fetch(getHackerNewsUrl(value, page))
       .catch(this.onSetError)
       .then(response => response.json())
-      .then(result => this.onSetResult(result));
+      .then(result => this.onSetResult(result, page));
   }
+
+  onSetResult = (result, page) =>
+    page === 0
+      ? this.setState(applySetResult(result))
+      : this.setState(applyUpdateResult(result));
 
   onSetError = () =>
     this.setState(applySetError);
-
-  onSetResult = (result) =>
-    this.setState(applySetResult(result));
 
   render() {
     return (
