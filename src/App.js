@@ -55,9 +55,9 @@ class App extends React.Component {
   fetchStories = (value, page) => {
     this.setState({ isLoading: true });
     fetch(getHackerNewsUrl(value, page))
-      .catch(this.onSetError)
       .then(response => response.json())
-      .then(result => this.onSetResult(result, page));
+      .then(result => this.onSetResult(result, page))
+      .catch(this.onSetError);
   }
 
   onSetResult = (result, page) =>
