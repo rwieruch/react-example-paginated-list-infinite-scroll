@@ -1,6 +1,6 @@
 # react-example-paginated-list-infinite-scroll
 
-[![Slack](https://slack-the-road-to-learn-react.wieruch.com/badge.svg)](https://slack-the-road-to-learn-react.wieruch.com/)
+[![Slack](https://slack-the-road-to-learn-react.wieruch.com/badge.svg)](https://slack-the-road-to-learn-react.wieruch.com/) [![Greenkeeper badge](https://badges.greenkeeper.io/rwieruch/react-example-paginated-list-infinite-scroll.svg)](https://greenkeeper.io/)
 
 Showcase on how to use paginated lists and infinite scroll in React. Read more about it in these tutorials:
 
